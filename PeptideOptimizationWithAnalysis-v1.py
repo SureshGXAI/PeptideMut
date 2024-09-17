@@ -177,14 +177,20 @@ def main():
     rename = "mv FINAL_DECOMP_MMPBSA.dat "+ str(inpfile.strip().split(".")[0])+"_FINAL_DECOMP_MMPBSA_min.dat"
     os.system(rename)
     ddg_for_min = subprocess.check_output("grep DELTA FINAL_RESULTS_MMPBSA.dat | awk '{print $3}' | tail -n1", shell=True)
+    rename = "mv FINAL_RESULTS_MMPBSA.dat "+ str(inpfile.strip().split(".")[0])+"_FINAL_RESULTS_MMPBSA_min.dat"
+    os.system(rename)
+
+    DecompostionProcessing(str(inpfile.strip().split(".")[0])+"_FINAL_DECOMP_MMPBSA_min.dat", 370, 407, "total")
+    DecompostionProcessing(str(inpfile.strip().split(".")[0])+"_FINAL_DECOMP_MMPBSA_min.dat", 779, 816, "bkb")
+    DecompostionProcessing(str(inpfile.strip().split(".")[0])+"_FINAL_DECOMP_MMPBSA_min.dat", 1188, 1234, "sidechain")
 #
     MMGBSAwithDecomp()
     rename = "mv FINAL_DECOMP_MMPBSA.dat "+ str(inpfile.strip().split(".")[0])+"_FINAL_DECOMP_MMPBSA.dat"
     os.system(rename)
 #
-    DecompostionProcessing('8f2a_h_FINAL_DECOMP_MMPBSA.dat', 370, 407, "total")
-    DecompostionProcessing('8f2a_h_FINAL_DECOMP_MMPBSA.dat', 779, 816, "bkb")
-    DecompostionProcessing('8f2a_h_FINAL_DECOMP_MMPBSA.dat', 1188, 1234, "sidechain")
+    DecompostionProcessing(str(inpfile.strip().split(".")[0])+"_FINAL_DECOMP_MMPBSA.dat", 370, 407, "total")
+    DecompostionProcessing(str(inpfile.strip().split(".")[0])+"_FINAL_DECOMP_MMPBSA.dat", 779, 816, "bkb")
+    DecompostionProcessing(str(inpfile.strip().split(".")[0])+"_FINAL_DECOMP_MMPBSA.dat", 1188, 1234, "sidechain")
 #
     rename = "mv mdcrd.nc "+ str(inpfile.strip().split(".")[0])+"_mdcrd.nc"
     os.system(rename)
@@ -198,14 +204,23 @@ def main():
     subprocess.run("rm comp* chain* leap.log _MMPBSA* min.* mdsim.* *.in md.*", shell=True)
     outfile = open('mmgbsa_freeenergies.txt', 'a')
     ddg = subprocess.check_output("grep DELTA FINAL_RESULTS_MMPBSA.dat | awk '{print $3}' | tail -n1", shell=True)
+    rename = "mv FINAL_RESULTS_MMPBSA.dat "+ str(inpfile.strip().split(".")[0])+"_FINAL_RESULTS_MMPBSA.dat"
+    os.system(rename)
     outfile.write(str(inpfile)+"\t"+str(ddg_for_min.decode())+"\t"+str(ddg.decode()))
     outfile.close()
 #
+    os.system("mv *min* MMGBSA-min")
+    os.system("mv *rmsdstructure.pdb RMSD")
+    os.system("mv *csv *dat MMGBSA-decomp")
+    os.system("mv "+str(inpfile.strip().split(".")[0]) +"_* INP")
     return 
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         inpfile = sys.argv[1]
+        dirt_list = ["INP", "RMSD", "MMGBSA-decomp", "MMGBSA-min"]
+        for dirt in dirt_list:
+            os.mkdir(dirt)
         main()
     else:
         print("Usage: python3 PeptideOptimizationWithAnalysis.py {inputpdb}")
