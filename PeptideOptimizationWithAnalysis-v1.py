@@ -206,7 +206,7 @@ def main():
     ddg = subprocess.check_output("grep DELTA FINAL_RESULTS_MMPBSA.dat | awk '{print $3}' | tail -n1", shell=True)
     rename = "mv FINAL_RESULTS_MMPBSA.dat "+ str(inpfile.strip().split(".")[0])+"_FINAL_RESULTS_MMPBSA.dat"
     os.system(rename)
-    outfile.write(str(inpfile)+"\t"+str(ddg_for_min.decode())+"\t"+str(ddg.decode()))
+    outfile.write(str(inpfile)+"\t"+str(ddg_for_min.decode().strip())+"\t"+str(ddg.decode().strip()))
     outfile.close()
 #
     os.system("mv *min* MMGBSA-min")
@@ -220,7 +220,8 @@ if __name__ == "__main__":
         inpfile = sys.argv[1]
         dirt_list = ["INP", "RMSD", "MMGBSA-decomp", "MMGBSA-min"]
         for dirt in dirt_list:
-            os.mkdir(dirt)
+            if os.path.exists(dirt):
+                os.mkdir(dirt)
         main()
     else:
         print("Usage: python3 PeptideOptimizationWithAnalysis.py {inputpdb}")
